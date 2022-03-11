@@ -1,0 +1,106 @@
+MIPS 16
+
+
+CIURUL LUI ERATOSTENE - afisarea numerelor prime pana la n
+
+PROGRAMUL EXECUTAT DE PROCESOR:
+
+0:addi $1,$0,16 			-- aici o sa tin minte n-ul (l-am ales 16)
+1:add $3,$0,$0 				-- contor pozitii / numere
+2:addi $4,$0,1 				-- incarc 1 ca sa compar cu 1
+3:	beq $3,$0,8 			-- daca este egal cu 0 sar la adaugare
+4:	beq $3,$4,7 			-- daca este egal 1 sar la adaugare
+5:	beq $3,$1,8 			-- am ajuns la n? daca da, sar la final
+6:		add $5,$0,$3 		-- retin care este numarul ca sa fac multiplii
+7:		beq $5,$1,4		-- am ajuns la n sau
+8:		bltz $5,$4,3		-- am trecut peste n (se face diferenta)
+9:			add $5,$5,$3 	-- fac multiplii 
+10:			sw $0,0($5) 	-- incarc 0 la pozitiile mutiplii de $3 
+11:			jump 7 		-- ma intorc la comparatie sa vad daca am ajuns dupa n
+12:	addi $3,$3,1 			-- merg o pozitie in fata
+13:	j 3 				-- ma intorc la comparatie sa vad pe ce numar sunt; incrementez
+14:	add $3 ,$0,$0			-- initializez iar cu 0 registrul 3 ca sa parcurg o data memoria sa se vada numerele   
+15: 	beq $3 ,$1,3			-- compar daca am ajuns la final (voi incarca n-ul daca am ajuns la final)
+16:		lw $2,0($3)		-- incarc in registrul 2 ce am la pozitia din MEM
+17:		addi $3,$3,1		-- incrementez contorul 	
+18:		j 15			-- sar inapoi la comparare 
+19:	add $2,$0,$1			-- incarc numarul n
+
+
+0:B"001_000_001_0010000",	"2090"
+1:B"000_000_000_011_0_000",	"0030"
+2:B"001_000_100_0000001",	"2201"
+3:B"100_000_011_0001000",	"8188"
+4:B"100_100_011_0000111",	"9187"	
+5:B"100_001_011_0001000",	"8588"	
+6:B"000_000_011_101_0_000",	"01D0"	
+7:B"100_001_101_0000100",	"8684"
+8:B"110_001_101_0000011",	"C683"     
+9:B"000_101_011_101_0_000",	"15D0"
+10:B"011_101_000_0000000",	"7400"
+11:B"111_0000000000111",	"E007"
+12:B"001_011_011_0000001",	"2D81",
+13:B"111_0000000000011",	"E003"
+14:B"000_000_000_011_0_000",	"0030"
+15:B"100_001_011_0000011",	"8583"
+16:B"010_011_010_0000000",	"4D00"    
+17:B"001_011_011_0000001",	"2D81"
+18:B"111_0000000001111",	"E00F"
+19:B"000_000_001_010_0_000",	"00A0"
+
+
+CODUL C DE LA CARE AM PORNIT:
+
+int main() {
+
+    for (int i = 0; i < n; i++) {
+        prime[i] = 0;
+    }
+
+    int p = 2;
+    while (p < n + 1) {
+        // Daca prime[p] nu este schimbat, atunci este prim
+        if (prime[p] == 0)
+        {
+            // ACTUALIZEZ TOTI MULTIPLII LUI p 
+            for (int i = p * 2; i < n+1; i += p)
+                prime[i] = 1;
+        }
+        p++;
+    }
+
+    //PRINTEZ TOATE NUMERELE PRIME
+    int k = 0;
+    for (int i = 2; i < n + 1; i++)
+        if (prime[i] == 0) {
+            printf("%d ", i);
+        }
+	return 0;
+}
+
+
+TRASAREA EXECUTIEI PROGRAMULUI: - a fost trasata doar prima iteratie
+
+0:addi $1,$0,16 			RD1: 0000  RD2: 0000  ALURes: 0010
+1:add $3,$0,$0 				RD1: 0000  RD2: 0000  ALURes: 0000
+2:addi $4,$0,1 				RD1: 0000  RD2: 0000  ALURes: 0001
+3:	beq $3,$0,8 			RD1: 0000  RD2: 0000  ALURes: 0000
+4:	beq $3,$4,7 			RD1: 0000  RD2: 0000  ALURes: 0010
+5:	beq $3,$1,8 			
+6:		add $5,$0,$3 		
+7:		beq $5,$1,4		
+8:		bltz $5,$4,3		
+9:			add $5,$5,$3 	
+10:			sw $0,0($5) 	
+11:			jump 7 		
+12:	addi $3,$3,1 			RD1: 0000  RD2: 0000  ALURes: 0001
+13:	j 3 				RD1: 0000  RD2: 0000  ALURes: 0000
+14:	add $3 ,$0,$0			
+15: 	beq $3 ,$1,3			
+16:		lw $2,0($3)		
+17:		addi $3,$3,1			
+18:		j 15			 
+19:	add $2,$0,$1	
+
+
+PROGRAMUL A FOST TESTAT PE PLACA SI FUNCTIONEAZA TOTUL CORECT!
